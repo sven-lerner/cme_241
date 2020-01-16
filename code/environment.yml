@@ -1,7 +1,0 @@
-name: cme_241 
-dependencies:
-  - ipython
-  - numpy
-  - jupyter
-  - pandas
-  - matplotlib
