@@ -22,15 +22,18 @@ class BaseMarkovProcessImpl(MarkovProcess):
         self._state_transitions = state_transitions
         self._states = sorted(state_transitions.keys())
 
-    def get_transition_probabilities(self, state: S) -> Mapping[S, float]:
-        return self._state_transitions[state]
-
-    def get_stationary_distributions(self) -> Sequence[Mapping[S, float]]:
+    def get_transitions_matrix(self):
         transition_matrix = np.zeros((len(self._states), len(self._states)))
         for i, s in enumerate(self._states):
             for j, s_prime in enumerate(self._states):
                 transition_matrix[i][j] = self._state_transitions[s].get(s_prime, 0)
-        eig_vals, eig_rvects = np.linalg.eig(transition_matrix.T)
+        return transition_matrix.T
+
+    def get_transition_probabilities(self, state: S) -> Mapping[S, float]:
+        return self._state_transitions[state]
+
+    def get_stationary_distributions(self) -> Sequence[Mapping[S, float]]:
+        eig_vals, eig_rvects = np.linalg.eig(self.get_transitions_matrix())
         one_eig_vects = eig_rvects[:, np.abs(eig_vals - 1) < 1e-8].T
         retlist = []
         for eig_vect in one_eig_vects:
