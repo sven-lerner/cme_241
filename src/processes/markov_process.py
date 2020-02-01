@@ -8,7 +8,7 @@ import numpy as np
 class MarkovProcess(ABC, Generic[S]):
 
     @abstractmethod
-    def get_transition_probabilities(self, state: S) -> Mapping[S, float]:
+    def get_transition_probabilities(self) -> Mapping[S, Mapping[S, float]]:
         pass
 
     @abstractmethod
@@ -29,8 +29,8 @@ class BaseMarkovProcessImpl(MarkovProcess):
                 transition_matrix[i][j] = self._state_transitions[s].get(s_prime, 0)
         return transition_matrix.T
 
-    def get_transition_probabilities(self, state: S) -> Mapping[S, float]:
-        return self._state_transitions[state]
+    def get_transition_probabilities(self) -> Mapping[S, Mapping[S, float]]:
+        return self._state_transitions
 
     def get_stationary_distributions(self) -> Sequence[Mapping[S, float]]:
         eig_vals, eig_rvects = np.linalg.eig(self.get_transitions_matrix())

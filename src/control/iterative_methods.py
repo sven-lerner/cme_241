@@ -12,18 +12,17 @@ def policy_iteration(mdp: MarkovDecisionProcess) -> Mapping[S, A]:
     value_function_for_policy = mdp.get_mrp(base_policy).get_value_func()
     greedy_policy = get_greedy_policy(mdp, value_function_for_policy)
     while not check_policy_equivalence(base_policy, greedy_policy):
-        check_policy_equivalence(base_policy, greedy_policy)
         base_policy = greedy_policy
         value_function_for_policy = mdp.get_mrp(base_policy).get_value_func()
         greedy_policy = get_greedy_policy(mdp, value_function_for_policy)
+    print('vf after policy is determined', value_function_for_policy)
     return greedy_policy
 
 
 def value_iteration(mdp: MarkovDecisionProcess) -> Mapping[S, float]:
-    base_value_function = {s: 0 for s in mdp.get_non_terminal_states()}
+    base_value_function = {s: 0 for s in mdp.get_actions_by_states().keys()}
     next_value_function = iterate_on_value_function(mdp, base_value_function)
-    # while not check_value_fuction_equivalence(base_value_function, next_value_function):\
-    for i in range(10):
+    while not check_value_fuction_equivalence(base_value_function, next_value_function):
         base_value_function = next_value_function
         next_value_function = iterate_on_value_function(mdp, base_value_function)
     return base_value_function
@@ -32,10 +31,10 @@ def value_iteration(mdp: MarkovDecisionProcess) -> Mapping[S, float]:
 def iterate_on_value_function(mdp: MarkovDecisionProcess, base_vf: Mapping[S, float]) -> Mapping[S, float]:
     actions: MDPActions = mdp.get_actions_by_states()
     new_vf = {}
-    for s in mdp.get_non_terminal_states():
-        best_action_reward = max(extract_value_of_action(mdp, s, action, base_vf) for action in actions[s])
+    for s in actions.keys():
+        action_values = [(action, extract_value_of_action(mdp, action, s, base_vf)) for action in actions[s]]
+        best_action_reward = max([x[1] for x in action_values])
         new_vf[s] = best_action_reward
-
     return new_vf
 
 
@@ -48,10 +47,10 @@ def extract_value_of_action(mdp: MarkovDecisionProcess, action: A, state: S, val
                                                     transitions[state][action].items()])
 
 
-def check_value_fuction_equivalence(v1, v2) -> bool:
+def check_value_fuction_equivalence(v1, v2, epsilon=1e-8) -> bool:
     assert v1.keys() == v2.keys(), "comparing policies with different state spaces"
     for state in v1:
-        if not eq_to_epsilon(v1[state], v2[state]):
+        if not eq_to_epsilon(v1[state], v2[state], epsilon):
             return False
     return True
 
