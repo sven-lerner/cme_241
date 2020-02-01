@@ -1,10 +1,13 @@
 from typing import Callable, Sequence, Mapping, Tuple
 from src.utils.generic_typevars import S, A
 
-SSf = Mapping[S, Mapping[S, float]]
-SSTff = Mapping[S, Mapping[S, Tuple[float, float]]]
-STSff = Mapping[S, Tuple[Mapping[S, float], float]],
-SAf = Mapping[S, Mapping[A, float]]
-SASf = Mapping[S, Mapping[A, Mapping[S, float]]]
-SASTff = Mapping[S, Mapping[A, Mapping[S, Tuple[float, float]]]]
-SATSff = Mapping[S, Mapping[A, Tuple[Mapping[S, float], float]]]
+# Markov Process Types
+MPTransitions = Mapping[S, Mapping[S, float]]
+
+# Markov Reward Process Types
+MRPRewards = Mapping[S, float]
+
+# Markov Decision Process Types
+MDPTransitions = Mapping[S, Mapping[A, Mapping[S, float]]]
+MDPActions = Mapping[S, A]
+MDPRewards = Mapping[S, Mapping[A, float]]

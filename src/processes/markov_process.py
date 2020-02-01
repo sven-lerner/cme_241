@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.utils.typevars import SSf
+from src.utils.typevars import MPTransitions
 from src.utils.generic_typevars import S
 from typing import Mapping, Set, Generic, Sequence
 import numpy as np
@@ -18,7 +18,7 @@ class MarkovProcess(ABC, Generic[S]):
 
 class BaseMarkovProcessImpl(MarkovProcess):
 
-    def __init__(self, state_transitions: SSf):
+    def __init__(self, state_transitions: MPTransitions):
         self._state_transitions = state_transitions
         self._states = sorted(state_transitions.keys())
 
