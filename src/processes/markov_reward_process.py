@@ -61,11 +61,8 @@ class BaseMarkovRewardProcessImpl(MarkovRewardProcess, BaseMarkovProcessImpl):
 
     def get_value_func_vec(self) -> np.ndarray:
         rewards = self.get_reward_vector()
-        print('rewards vector', rewards)
         transitions = self.get_transitions_matrix()
-        print('transitions matrix', transitions)
         values = np.linalg.inv(np.eye(transitions.shape[0]) - self._gamma * transitions).dot(rewards)
-        print('values', values)
         return values
 
     def get_value_func(self) -> Mapping[S, float]:

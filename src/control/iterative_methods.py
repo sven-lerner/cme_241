@@ -15,7 +15,6 @@ def policy_iteration(mdp: MarkovDecisionProcess) -> Mapping[S, A]:
         base_policy = greedy_policy
         value_function_for_policy = mdp.get_mrp(base_policy).get_value_func()
         greedy_policy = get_greedy_policy(mdp, value_function_for_policy)
-    print('vf after policy is determined', value_function_for_policy)
     return greedy_policy
 
 

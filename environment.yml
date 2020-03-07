@@ -1,5 +1,7 @@
 name: cme_241 
 dependencies:
+  - flake8
+  - tqdm
   - ipython
   - numpy
   - jupyter

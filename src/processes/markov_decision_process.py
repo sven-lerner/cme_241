@@ -71,6 +71,4 @@ class BaseMarkovDecisionProcessImpl(MarkovDecisionProcess, BaseMarkovRewardProce
         mrp_rewards: Mapping[S, float] = {s: sum(
             [self._rewards[s][a]*action_prob for a, action_prob in policy[s]]
             ) for s in self._states}
-        print('mrp transitions', mrp_transitions)
-        print('mrp rewards', mrp_rewards)
         return BaseMarkovRewardProcessImpl(mrp_transitions, mrp_rewards, self._gamma)
