@@ -1,12 +1,7 @@
 import numpy as np
-from src.control.iterative_methods import policy_iteration
-from src.processes.markov_decision_process import BaseMarkovDecisionProcessImpl
-from typing import Callable, Sequence, Mapping, Tuple, Set
+from typing import Sequence, Mapping, Tuple, Set
 from src.utils.generic_typevars import S, A
 from src.utils.typevars import Tab_RL_Transitions
-from tqdm.notebook import tqdm
-from collections import defaultdict
-
 
 
 class Policy():
@@ -75,5 +70,3 @@ class BaseTabularRL():
 
     def get_q_value_function(self, policy: Policy) -> Mapping[Tuple[S, A], float]:
         pass
-
-

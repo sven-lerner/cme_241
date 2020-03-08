@@ -61,9 +61,10 @@ def test_basic_mrp_value_iteration():
     mdp = BaseMarkovDecisionProcessImpl(transitions, rewards, terminal_states, gamma)
     value_function = value_iteration(mdp)
     assert check_value_fuction_equivalence(value_function,
-                                            {1: 34.48275855319572,
+                                           {1: 34.48275855319572,
                                             2: 34.48275855319572,
                                             3: 0})
+
 
 def test_value_and_policy_iteration_converge():
     transitions = {

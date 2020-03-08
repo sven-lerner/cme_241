@@ -10,7 +10,7 @@ def test_simple_order_exec_rl():
 
 
 def test_simple_order_exec_mdp():
-    dsmdp = DumpStockMDP(2, 8, 1, 0.1, 1, min_price=0,max_price=10)
+    dsmdp = DumpStockMDP(2, 8, 1, 0.1, 1, min_price=0, max_price=10)
     opt_policy = dsmdp.solve()
     assert opt_policy[(2, 5, 4)] == {(2, 1)}
     assert opt_policy[(2, 5, 8)] == {(4, 1)}

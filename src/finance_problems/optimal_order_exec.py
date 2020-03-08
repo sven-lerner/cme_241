@@ -83,7 +83,8 @@ class DumpStockRLProblem():
                                         range(1, self.init_shares + 1)]
 
         dump_stock_ql = QLearningTabular(self.transitions, terminal_states=terminal_states,
-                                         state_actions=self.state_actions, gamma=1, num_episodes=int(max_episodes), max_iter=100,
+                                         state_actions=self.state_actions, gamma=1, num_episodes=int(max_episodes),
+                                         max_iter=100,
                                          starting_distribution=starting_state_distributions)
         q_func = dump_stock_ql.learn_q_value_function(alpha=1e-2, reset=lambda: self.market.reset())
         policy = dump_stock_ql.get_epsilon_greedy_policy(q_func, 0)
@@ -125,7 +126,6 @@ class DumpStockMDP(BaseMarkovDecisionProcessImpl):
                 for action in self.state_actions[state]:
                     sale_price = state[1] - self.beta * action
                     next_price = max(int(state[1] - self.beta * action), 0)
-                    next_state = (state[0] - 1, next_price, state[2] - action)
                     reward = sale_price * action
                     if uncertain_price:
                         if next_price == self.min_price:

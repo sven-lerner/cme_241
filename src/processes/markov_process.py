@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from src.utils.typevars import MPTransitions
 from src.utils.generic_typevars import S
-from typing import Mapping, Set, Generic, Sequence
+from typing import Mapping, Generic, Sequence
 import numpy as np
 
 

@@ -1,4 +1,4 @@
-from typing import Callable, Sequence, Mapping, Tuple
+from typing import Callable, Mapping, Tuple
 from src.utils.generic_typevars import S, A
 
 # Markov Process Types
@@ -11,4 +11,4 @@ MRPRewards = Mapping[S, float]
 MDPTransitions = Mapping[S, Mapping[A, Mapping[S, float]]]
 MDPActions = Mapping[S, A]
 MDPRewards = Mapping[S, Mapping[A, float]]
-Tab_RL_Transitions= Mapping[Tuple[S, A], Callable[[], Tuple[S, float]]]
+Tab_RL_Transitions = Mapping[Tuple[S, A], Callable[[], Tuple[S, float]]]

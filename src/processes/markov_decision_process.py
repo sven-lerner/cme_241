@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 
 from src.utils.generic_typevars import S, A
-from typing import Mapping, Set, Tuple, Generic, Sequence
+from typing import Mapping, Set, Tuple, Sequence
 
 from src.processes.markov_reward_process import MarkovRewardProcess, BaseMarkovRewardProcessImpl
 from src.utils.typevars import MDPTransitions, MDPRewards, MDPActions

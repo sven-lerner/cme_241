@@ -1,12 +1,9 @@
 import numpy as np
-from src.control.iterative_methods import policy_iteration
-from src.processes.markov_decision_process import BaseMarkovDecisionProcessImpl
-from typing import Callable, Sequence, Mapping, Tuple, Set
+from typing import Sequence, Mapping, Tuple
 
 from src.rl_algos.base_rl_algo import BaseTabularRL, Policy
 from src.utils.generic_typevars import S, A
-from src.utils.typevars import Tab_RL_Transitions
-from tqdm.notebook import tqdm
+
 from collections import defaultdict
 
 
@@ -60,9 +57,6 @@ class TDZTabularRL(BaseTabularRL):
 
     def get_value_function(self, policy: Policy, alpha=0.01, first_visit=False) -> Mapping[S, float]:
         value_function = {s: 0 for s in self.states}
-        counts = {s: 0 for s in self.states}
-        total_ret = {s: 0 for s in self.states}
-        print(self.num_episodes)
         for _ in range(self.num_episodes):
             starting_state = np.random.choice([state for state, _ in self.starting_distribution], 1,
                                               p=[prob for _, prob in self.starting_distribution])[0]
@@ -84,8 +78,6 @@ class TDLambdaTabularRL(BaseTabularRL):
                            lmbda: float = 0) -> Mapping[S, float]:
         print(self.states)
         value_function = {s: 0 for s in self.states}
-        counts = {s: 0 for s in self.states}
-        total_ret = {s: 0 for s in self.states}
         for _ in range(self.num_episodes):
             starting_state = np.random.choice([state for state, _ in self.starting_distribution], 1,
                                               p=[prob for _, prob in self.starting_distribution])[0]

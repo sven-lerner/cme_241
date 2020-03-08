@@ -137,6 +137,7 @@ def test_sarsa():
     expected_policy = {1: 'd', 2: 'l', 3: 'd', 4: 'l', 5: 'd', 6: 'd', 7: 's', 8: 'r', 9: 'r', 10: 'r', 11: 's'}
     assert p == expected_policy
 
+
 def test_sarsa_lambda():
     rl_srsaL = SarsaLambdaRL(mdp_transitions, terminal_states=terminal_states,
                              state_actions=actions, gamma=0.9, num_episodes=10000, max_iter=100,
