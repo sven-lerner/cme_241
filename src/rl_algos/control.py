@@ -128,8 +128,8 @@ class QLearningTabular(BaseTabularRL):
                                                     p=[prob for _, prob in self.starting_distribution])[0]
             starting_state = self.starting_distribution[starting_state_index][0]
             current_q_vf, updated_states = self.run_episode_update_q(starting_state, current_q_vf, epsilon, alpha,
-                                                     counts_per_state,
-                                                     base_policy, base_greedy_policy)
+                                                                     counts_per_state,
+                                                                     base_policy, base_greedy_policy)
             # if k % 100 == 0 or self.num_episodes - k <= 1000:
             base_greedy_policy = self.update_epsilon_greedy_policy(base_greedy_policy, updated_states, current_q_vf, 0)
             base_policy = self.update_epsilon_greedy_policy(base_policy, updated_states, current_q_vf, epsilon)

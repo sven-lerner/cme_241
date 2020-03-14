@@ -4,7 +4,7 @@ from src.utils.generic_typevars import S, A
 from src.utils.typevars import Tab_RL_Transitions
 
 
-class Policy():
+class Policy:
     def __init__(self, policy_info: Mapping[S, Mapping[A, float]]):
         self.policy_info = {state: [(action, prob) for action, prob in policy_info[state].items()] for state
                             in policy_info.keys()}
@@ -16,7 +16,7 @@ class Policy():
                                 p=[prob for _, prob in self.policy_info[state]])[0]
 
 
-class BaseTabularRL():
+class BaseTabularRL:
 
     def __init__(self, transitions: Tab_RL_Transitions, terminal_states: Set[S],
                  state_actions: Mapping[S, Set[A]], gamma: float, num_episodes=100, max_iter=100,
@@ -70,7 +70,6 @@ class BaseTabularRL():
             state_policy[best_action] += 1 - epsilon
             policy.policy_info[state] = [(action, prob) for action, prob in state_policy.items()]
         return policy
-
 
     def get_value_function_from_policy(self, policy: Policy):
         pass

@@ -74,8 +74,9 @@ def value_iteration(mdp: MarkovDecisionProcess, vi_method: str = 'normal', k=Non
             next_value_function = cycle_iterate_on_value_function_rp(mdp, base_value_function)
             max_diffs = record_convergence(log_converence, max_diffs, gt_vf, next_value_function)
     else:
-        raise NotImplemented(f'have not implemented {vi_method} value iteration yet')
+        raise NotImplementedError(f'have not implemented {vi_method} value iteration yet')
     return base_value_function, num_iter, max_diffs
+
 
 def iterate_on_value_function(mdp: MarkovDecisionProcess, base_vf: Mapping[S, float]) -> Mapping[S, float]:
     new_vf = {}
@@ -133,7 +134,6 @@ def iterate_on_value_function_specific_states(mdp: MarkovDecisionProcess,
     actions = mdp.get_actions_by_states()
     new_vf = {}
     updated_states = set()
-    states = list(actions.keys())
     for s in states_to_update:
         action_values = [(action, extract_value_of_action(mdp,
                                                           action, s, base_vf)) for action in actions[s]]
