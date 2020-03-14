@@ -46,19 +46,22 @@ class LPIMarket(Market):
         return self.price - self.beta * num_shares
 
 
-class DumpStockRLProblem():
+class DumpStockRLProblem:
 
     def __init__(self, T: int, num_shares: int, market: Market):
         self.T = T
         self.market = market
         self.init_shares = num_shares
-        self.states = [(T, Nt) for T in range(1, self.T + 1) for Nt in range(0, num_shares + 1)] + [(0, 0)] + [(-1, 0)]
+        self.states = self.get_states()
         self.state_actions = self.get_state_actions()
         self.transitions = self.get_transitions()
 
     def get_state_actions(self):
         return dict((state, list(range(state[1] + 1))) if state[0] > 1 else (state, [state[1]])
                     for state in self.states)
+
+    def get_states(self):
+        return [(T, Nt) for T in range(1, self.T + 1) for Nt in range(0, self.init_shares + 1)] + [(0, 0)] + [(-1, 0)]
 
     def get_submit_order_process_timestep_callable(self, num_shares, T, rt):
         def call():
@@ -76,11 +79,14 @@ class DumpStockRLProblem():
                                                                                                state[1])
         return transitions
 
+    def get_starting_distributions(self):
+        return [((start_time, start_shares), 1 / (self.T * self.init_shares))
+                for start_time in range(1, self.T + 1) for start_shares in
+                range(1, self.init_shares + 1)]
+
     def solve(self, max_episodes):
         terminal_states = [state for state in self.states if state[0] == 0]
-        starting_state_distributions = [((start_time, start_shares), 1 / (self.T * self.init_shares))
-                                        for start_time in range(1, self.T + 1) for start_shares in
-                                        range(1, self.init_shares + 1)]
+        starting_state_distributions = self.get_starting_distributions()
 
         dump_stock_ql = QLearningTabular(self.transitions, terminal_states=terminal_states,
                                          state_actions=self.state_actions, gamma=1, num_episodes=int(max_episodes),
@@ -89,6 +95,50 @@ class DumpStockRLProblem():
         q_func = dump_stock_ql.learn_q_value_function(alpha=1e-2, reset=lambda: self.market.reset())
         policy = dump_stock_ql.get_epsilon_greedy_policy(q_func, 0)
         return policy, q_func
+
+
+class TimeDependantDumpStockRLProblem(DumpStockRLProblem):
+    price_swing_constant = 0.5
+
+    def get_states(self):
+        price_swing = int(self.init_shares*self.price_swing_constant)
+        return [(T, Nt, Pt) for T in range(1, self.T + 1)
+                for Nt in range(0, self.init_shares + 1)
+                for Pt in range(self.market.price - price_swing,
+                                self.market.price + price_swing)] + \
+               [(0, 0, Pt) for Pt in range(self.market.price - price_swing,
+                                           self.market.price + price_swing)] + \
+               [(-1, 0, Pt) for Pt in range(self.market.price - price_swing,
+                                            self.market.price + price_swing)]
+
+    def get_state_actions(self):
+        return dict((state, list(range(state[1] + 1))) if state[0] > 1 else (state, [state[1]])
+                    for state in self.states)
+
+    def get_submit_order_process_timestep_callable(self, num_shares, T, rt):
+        def call():
+            price_sold = self.market.submit_order(num_shares)
+            reward = price_sold * num_shares
+            self.market.process_timestep()
+            return (T - 1, rt - num_shares, int(self.market.price)), reward
+
+        return call
+
+    def get_transitions(self):
+        transitions = {}
+        for state in self.states:
+            for action in self.state_actions[state]:
+                transitions[(state, action)] = self.get_submit_order_process_timestep_callable(action, state[0],
+                                                                                               state[1])
+        return transitions
+
+    def get_starting_distributions(self):
+        share_interval = list(range(int(self.market.price) - int(self.init_shares*self.price_swing_constant),
+                              int(self.market.price) + int(self.init_shares*self.price_swing_constant)))
+        return [((start_time, start_shares, start_price), 1 / (self.T * self.init_shares * len(share_interval)))
+                for start_time in range(1, self.T + 1)
+                for start_shares in range(1, self.init_shares + 1)
+                for start_price in share_interval]
 
 
 class DumpStockMDP(BaseMarkovDecisionProcessImpl):
@@ -137,13 +187,13 @@ class DumpStockMDP(BaseMarkovDecisionProcessImpl):
                             transitions[state][action] = {
                                 (state[0] - 1, max(next_price - 1, self.min_price), state[2] - action): 1 / 4,
                                 (state[0] - 1, next_price, state[2] - action): 3 / 4
-                                }
+                            }
                         else:
                             transitions[state][action] = {
                                 (state[0] - 1, max(next_price - 1, self.min_price), state[2] - action): 1 / 4,
                                 (state[0] - 1, next_price, state[2] - action): 1 / 2,
                                 (state[0] - 1, min(next_price + 1, self.max_price), state[2] - action): 1 / 4,
-                                }
+                            }
 
                     else:
                         transitions[state][action] = {(state[0] - 1, next_price, state[2] - action): 1}

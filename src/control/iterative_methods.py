@@ -1,4 +1,5 @@
-from typing import Mapping
+from collections import defaultdict
+from typing import Mapping, Set
 
 from src.processes.markov_decision_process import MarkovDecisionProcess
 from src.utils.func_utils import eq_to_epsilon
@@ -73,3 +74,15 @@ def get_greedy_policy(mdp: MarkovDecisionProcess, value_function: Mapping[S, flo
     for s in mdp.get_terminal_states():
         policy[s] = {(actions[s][0], 1)}
     return policy
+
+
+def get_influence_tree(transitions) -> Mapping[S, Set[S]]:
+    """
+    returns a mapping from state to all states that depend on that state in bellman equantions
+    """
+    influence_tree = defaultdict(set)
+    for state in transitions:
+        for action in transitions[state]:
+            for next_state in transitions[state][action]:
+                influence_tree[next_state].add(state)
+    return influence_tree

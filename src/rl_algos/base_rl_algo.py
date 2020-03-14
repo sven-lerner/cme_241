@@ -62,6 +62,16 @@ class BaseTabularRL():
             policy_info[state] = policy
         return Policy(policy_info)
 
+    def update_epsilon_greedy_policy(self, policy, states_to_update, q_value_function, epsilon):
+        for state in states_to_update:
+            actions = self.state_actions[state]
+            best_action = max([(q_value_function[state, a], a) for a in actions])[1]
+            state_policy = {a: epsilon / len(actions) for a in actions}
+            state_policy[best_action] += 1 - epsilon
+            policy.policy_info[state] = [(action, prob) for action, prob in state_policy.items()]
+        return policy
+
+
     def get_value_function_from_policy(self, policy: Policy):
         pass
 
