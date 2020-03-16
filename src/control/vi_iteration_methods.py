@@ -83,7 +83,7 @@ def iterate_on_value_function(mdp: MarkovDecisionProcess, base_vf: Mapping[S, fl
     actions = mdp.get_actions_by_states()
     for s in actions.keys():
         action_values = [(action, extract_value_of_action(mdp, action, s, base_vf)) for action in actions[s]]
-        best_action_reward = min([x[1] for x in action_values])
+        best_action_reward = max([x[1] for x in action_values])
         new_vf[s] = best_action_reward
     return new_vf
 
@@ -95,7 +95,7 @@ def cycle_iterate_on_value_function(mdp: MarkovDecisionProcess,
     for s in actions.keys():
         action_values = [(action, extract_value_of_action(mdp,
                                                           action, s, new_vf)) for action in actions[s]]
-        best_action_reward = min([x[1] for x in action_values])
+        best_action_reward = max([x[1] for x in action_values])
         new_vf[s] = best_action_reward
     return new_vf
 
@@ -107,7 +107,7 @@ def cycle_iterate_on_value_function_rp(mdp: MarkovDecisionProcess, base_vf: Mapp
     np.random.shuffle(states)
     for s in states:
         action_values = [(action, extract_value_of_action(mdp, action, s, new_vf)) for action in actions[s]]
-        best_action_reward = min([x[1] for x in action_values])
+        best_action_reward = max([x[1] for x in action_values])
         new_vf[s] = best_action_reward
     return new_vf
 
@@ -121,7 +121,7 @@ def random_k_iterate_on_value_function(mdp: MarkovDecisionProcess, base_vf: Mapp
     states_to_update = [states[idx] for idx in states_to_update_idx]
     for s in states_to_update:
         action_values = [(action, extract_value_of_action(mdp, action, s, base_vf)) for action in actions[s]]
-        best_action_reward = min([x[1] for x in action_values])
+        best_action_reward = max([x[1] for x in action_values])
         new_vf[s] = best_action_reward
     for s in set(actions.keys()) - set(states_to_update):
         new_vf[s] = base_vf[s]
@@ -137,7 +137,7 @@ def iterate_on_value_function_specific_states(mdp: MarkovDecisionProcess,
     for s in states_to_update:
         action_values = [(action, extract_value_of_action(mdp,
                                                           action, s, base_vf)) for action in actions[s]]
-        best_action_reward = min([x[1] for x in action_values])
+        best_action_reward = max([x[1] for x in action_values])
         new_vf[s] = best_action_reward
         if abs(new_vf[s] - base_vf[s]) > 1e-8:
             updated_states.add(s)
